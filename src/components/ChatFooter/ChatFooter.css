@@ -1,0 +1,28 @@
+.chat-footer {
+    border-top: 2px solid #f6f6f6;
+    height: 6rem;
+    flex-shrink: 0;
+    display: flex;
+}
+
+.chat-footer .msg-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    font-size: 2rem;
+    text-indent: 1.3rem;
+    font-family: inherit;
+    border-radius: 0 0 0 14px;
+}
+
+.chat-footer .msg-input:focus {
+    outline: none;
+}
+
+.chat-footer .submit-btn {
+    cursor: pointer;
+    flex-shrink: 0;
+    height: 2.5rem;
+    align-self: center;
+    padding: 2rem;
+}
