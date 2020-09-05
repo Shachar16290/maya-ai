@@ -7,7 +7,7 @@ import ChatContent from '../ChatContent/ChatContent';
 
 import './Chat.css';
 
-const useTimeoutMessages = (timeout = 1000, initialValue = [], callback) => {
+const useTimeoutMessages = (timeout = 500, initialValue = [], callback) => {
     const [preMessages, setPreMessages] = useState(initialValue)
     const messagesRef = useRef(preMessages)
     messagesRef.current = preMessages
@@ -17,7 +17,7 @@ const useTimeoutMessages = (timeout = 1000, initialValue = [], callback) => {
           
         setTimeout(() => {
            setPreMessages([...messagesRef.current, message])
-           callback(message)
+           callback && callback(message)
           }, timeout * i)
         )
 
@@ -29,9 +29,10 @@ const useTimeoutMessages = (timeout = 1000, initialValue = [], callback) => {
 const Chat = () => {
     const [name, setName] = useSessionStorage('name', '')
     const [isBot, setIsBot] = useState(true) 
-    const [messages, setMessages] = useTimeoutMessages(1000, [], ({ isUserInput })=> setIsBot(isUserInput))
+    const [messages, setMessages] = useTimeoutMessages(500, [], ({ isUserInput })=> setIsBot(!!isUserInput))
 
    
+    // At first render, we need to check if we already have a name in the session storage and show the correct messages
     useEffect(()=>{
         if (name) {
             setMessages([...BOT_MESSAGES.NICE_TO_SEE(name), ...BOT_MESSAGES.DESCRIBE_PROCESS()]) 
@@ -46,6 +47,7 @@ const Chat = () => {
         // We check if this is the user turn to give an input.
         // If we already have a name, we expect math expression. Otherwise, we expect a name and add the correct messages.
         if(!isBot){   
+            setIsBot(true)
             if(!name){
                 setName(newMessage)
                 setMessages([ 
