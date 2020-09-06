@@ -17,7 +17,10 @@ const useTimeoutMessages = (timeout = 500, initialValue = [], callback) => {
           
         setTimeout(() => {
            setPreMessages([...messagesRef.current, message])
-           callback && callback(message)
+
+           // Run callback only after last message was added
+           callback &&  i === messages.length - 1 && callback(message)
+
           }, timeout * i)
         )
 
@@ -29,7 +32,7 @@ const useTimeoutMessages = (timeout = 500, initialValue = [], callback) => {
 const Chat = () => {
     const [name, setName] = useSessionStorage('name', '')
     const [isBot, setIsBot] = useState(true) 
-    const [messages, setMessages] = useTimeoutMessages(500, [], ({ isUserInput })=> setIsBot(!!isUserInput))
+    const [messages, setMessages] = useTimeoutMessages(500, [], ({ isUserInput })=> { setIsBot(!!isUserInput) })
 
    
     // At first render, we need to check if we already have a name in the session storage and show the correct messages
@@ -46,16 +49,15 @@ const Chat = () => {
     const sendMessageHandler = (newMessage) => {
         // We check if this is the user turn to give an input.
         // If we already have a name, we expect math expression. Otherwise, we expect a name and add the correct messages.
-        if(!isBot){   
+        if (!isBot) {   
             setIsBot(true)
-            if(!name){
+            if (!name) {
                 setName(newMessage)
                 setMessages([ 
                             { message: newMessage, isUserInput: true },
                             ...BOT_MESSAGES.NICE_TO_MEET(newMessage), 
                             ...BOT_MESSAGES.DESCRIBE_PROCESS()])
-            }
-            else {
+            } else {
                 setMessages([ 
                             { message: newMessage, isUserInput: true },
                             { message: calculateMathExpression(newMessage) }, 
